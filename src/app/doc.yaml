@@ -1,0 +1,267 @@
+openapi: 3.0.0
+info:
+  title: Simple API
+  description: Products CRUD
+  termsOfService: http://localhost
+  contact:
+    name: Jean Carlos Batista
+    email: jean.carlosbatistta@gmail.com
+  license:
+    name: ""
+    url: http://localhost
+  version: 1.0.0
+servers:
+  - url: http://localhost:{port}
+    description: Development Server
+    variables:
+      port:
+        enum:
+          - "3000"
+        default: "3000"
+tags:
+  - name: Login
+  - name: Products
+paths:
+  /login:
+    post:
+      tags:
+        - Login
+      summary: Authentic in the API
+      operationId: postLogin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref:  "#/components/schemas/loginSchema"
+        required: true
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+        401:
+          description: Invalid user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/apiResponse"
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/apiResponse"
+  /products:
+    get:
+      tags:
+        - Products
+      summary: Returns products
+      security:
+        - ApiKeyAuth: []
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref:  "#/components/schemas/productSchema"
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/apiResponse"
+    post:
+      tags:
+        - Products
+      summary: Create new product
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref:  "#/components/schemas/newProductSchema"
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref:  "#/components/schemas/createdSchema"
+        500:  
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/apiResponse"
+  /products/{id}:
+    get:
+      tags:
+        - Products
+      summary: Returns the product through your id
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/productSchema"
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/apiResponse"
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/apiResponse"
+    delete:
+      tags:
+        - Products
+      summary: Remove product
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      security:
+        - ApiKeyAuth: []
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: string
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/apiResponse"
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/apiResponse"
+    put:
+      tags:
+        - Products
+      summary: Remove product
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref:   "#/components/schemas/updateProductSchema"
+      security:
+        - ApiKeyAuth: []
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: string
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/apiResponse"
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/apiResponse"                
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+  schemas:
+    apiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+        error:
+          type: string
+    createdSchema:
+      type: object
+      properties:
+        id:
+          type: string
+    productSchema:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        createdAt:
+          type: string
+          description: datetime
+        updatedAt:
+          type: string
+          description: datetime
+    newProductSchema:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+          format: float
+    updateProductSchema:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+          format: float          
+    loginSchema:
+      type: object
+      properties:
+        user:
+          type: string
+        pass:
+          type: string      

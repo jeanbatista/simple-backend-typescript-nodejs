@@ -1,0 +1,21 @@
+version: "3.1"
+
+services:
+  db-mongo:
+    image: mongo
+    container_name: db-simple
+    restart: on-failure
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+
+  app:
+    build: .
+    command: npm run dev
+    restart: on-failure
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development 
